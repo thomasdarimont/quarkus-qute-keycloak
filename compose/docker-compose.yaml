@@ -3,13 +3,13 @@ services:
   todo-db:
     image: postgres:11
     ports:
-     - 5432:5432
+     - 15432:5432
     environment:
      - POSTGRES_USER=todouser
      - POSTGRES_PASSWORD=todopw
      - POSTGRES_DB=tododb
     volumes:
-     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+     - ./init.sql:/docker-entrypoint-initdb.d/init.sql:z
     networks:
      - my-network
   pgadmin:
@@ -19,11 +19,25 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     volumes:
-     - ./servers.json:/pgadmin4/servers.json
+     - ./servers.json:/pgadmin4/servers.json:z
     ports:
-      - "${PGADMIN_PORT:-5050}:80"
+      - "${PGADMIN_PORT:-15050}:80"
     networks:
       - my-network
+
+  keycloak:
+    container_name: quarkus_keycloak
+    image: quay.io/keycloak/keycloak:12.0.1
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      KEYCLOAK_IMPORT: /tmp/quarkus-realm.json
+    volumes:
+      - ./quarkus-realm.json:/tmp/quarkus-realm.json:z
+      - ./data:/opt/jboss/keycloak/standalone/data:z
+    ports:
+      - "${KEYCLOAK_PORT:-9180}:8080"
+
 networks:
   my-network:
    name: todo-network

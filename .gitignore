@@ -3,6 +3,8 @@
 .classpath
 .settings/
 bin/
+data/
+!data/.gitkeep
 
 # IntelliJ
 .idea

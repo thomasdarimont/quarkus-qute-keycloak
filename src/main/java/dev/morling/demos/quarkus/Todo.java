@@ -10,4 +10,6 @@ public class Todo extends PanacheEntity {
     public String title;
     public int priority;
     public boolean completed;
+
+    public String userId;
 }
